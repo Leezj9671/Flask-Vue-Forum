@@ -2,7 +2,7 @@
   <div id="app">
     <div class="container">
       <h1 class="title">Message Board</h1>
-        <form action="/api/messages" method="POST" @submit.prevent="onSubmit">
+        <form action="/api/messages" method="POST" @submit.prevent="addMessage">
           <div class="form-group">
             <input type="text" class="form-control" name="name" placeholder="Name" v-model="name">
           </div>
@@ -32,7 +32,7 @@ export default {
       name: '',
       text: '',
 
-      // ????
+      // testdata
       messages: [
         {name: 'Abbb', text: 'testtext1', created_at: '2017-06-29T11:04:52.226Z'},
         {name: 'Bddd', text: 'testtext2', created_at: '2017-06-19T11:04:52.226Z'},
@@ -49,10 +49,27 @@ export default {
       })
       this.name = ''
       this.text = ''
+    },
+    addMessage() {
+      axios.psot('/api/messages', {
+        'name': this.name,
+        'text': this.text,
+      }).then(response => {
+        if (response.data.ok) {
+          this.messages.unshift({
+            name: this.name,
+            text: this.text,
+            created_at: new Date().toISOString()
+          })
+        }
+      })
     }
   },
   components: {
     MessageItem
+  },
+  mouted() {
+    axios.get('api/messages').then(response => this.messages=response.data)
   }
 }
 </script>
